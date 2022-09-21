@@ -4,21 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberSoc</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
   </head>
   <body>
-    <h1>Cyber Soc Talks</h1>
+    <h1>Cyber Soc Schedule</h1>
 
+    <h2>Do a Talk!</h2>
+    <form method="post" action="/talk/create">
+      <p style="color: #f00"><%= @msg %></p>
+
+      <label for="title">Talk Title</label>
+      <input type="text" id="title" name="title" placeholder="Enter the title of your talk" required />
+
+      <label for="author">Name</label>
+      <input type="text" id="author" name="author" placeholder="Enter your name" required />
+
+      <label for="email">School Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your school email address" required>
+
+      <label for="date">Talk Date</label>
+      <select id="date" name="date">
+        <option value="" disabled selected>Select an available date</option>
+        <% @dates.select { |_, t| t.nil? }.each do |date, _| %>
+          <option value="<%= date.to_i %>"><%= date.strftime('%a %e %B %Y') %></option>
+        <% end %>
+      </select>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <h2>Planned Talks</h2>
     <table>
       <tr>
         <th>Date</th>
         <th>Title</th>
         <th>Presenter</th>
       </tr>
-        <% @dates.each do |date| %>
-          
-        <% end %>
-      </tr>
-    </ta
+      <% @dates.each do |date, task| %>
+        <tr>
+          <td><%= date.strftime('%a %e %B %Y') %></td>
+          <% if task.nil? %>
+            <td colspan="2">No talk scheduled</td>
+          <% else %>
+            <td><%= task.title %></td>
+            <td><%= task.author %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
   </body>
 </html>
