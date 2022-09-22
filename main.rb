@@ -6,13 +6,14 @@ require_relative 'lib/cybersoc'
 set :bind, '0.0.0.0'
 
 db = CyberSoc::DataBase.new
-time_handler = CyberSoc::TimeHandler.new
+
+include CyberSoc::TimeHandler
 
 get '/' do
-  @dates = time_handler.dates.clone
+  @dates = dates
 
-  db.all_talks(after: time_handler.start_of_day(Time.now)).each do |t|
-    start = time_handler.start_of_day(t.date)
+  db.all_talks(after: start_of_day(Time.now)).each do |t|
+    start = start_of_day(t.date)
     @dates[start] = t if @dates.include?(start)
   end
 

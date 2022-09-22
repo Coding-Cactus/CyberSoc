@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module CyberSoc
-  class TimeHandler
-    attr_reader :dates
-
+  module TimeHandler
     HOLIDAYS = [
       Time.new(2022, 10, 5)..Time.new(2022, 10, 6),   # CPD day
       Time.new(2022, 10, 17)..Time.new(2022, 10, 28), # Michaelmas half term holiday
@@ -15,33 +13,28 @@ module CyberSoc
       Time.new(2023, 6, 25)..Time.new(2023, 9, 1)     # Activities week + summer holiday
     ].freeze
 
-    def initialize
-      @dates = {}
-      current_wed = next_wed
-
-      until current_wed > Time.new(2023, 9, 1)
-        @dates[current_wed] = nil unless holiday?(current_wed)
-        current_wed = start_of_day(current_wed + 630_000)
-      end
-    end
-
     def holiday?(date) = HOLIDAYS.any? { |h| h.include?(date) }
 
     def start_of_day(date)
       Time.new(date.strftime('%Y').to_i, date.strftime('%m').to_i, date.strftime('%d').to_i, 0, 0, 0, '+00:00')
     end
-
-    def valid_date?(date) = @dates.include?(date)
-
-    private
-
-    def next_wed
+    
+    def dates
       today = Time.now
       num = %w[Sun Mon Tue Wed Thu Fri Sat].index(today.strftime('%a'))
 
       throw RuntimeError('strftime did not return expected string') if num.nil?
 
-      start_of_day(Time.now + ((num > 3 ? 10 - num : 3 - num) * 86_400))
+      current_wed = start_of_day(Time.now + ((num > 3 ? 10 - num : 3 - num) * 86_400))
+
+      d = {}
+      until current_wed > Time.new(2023, 9, 1)
+        d[current_wed] = nil unless holiday?(current_wed)
+        current_wed = start_of_day(current_wed + 630_000)
+      end
+      d
     end
+
+    def valid_date?(date) = dates.include?(date)
   end
 end

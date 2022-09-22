@@ -32,7 +32,7 @@ module CyberSoc
         all_present?([title, author, email]) && valid_day?(date) && valid_email?(email)
     end
 
-    def valid_day?(date) = TimeHandler.new.valid_date?(date) && @client.find({ date: date }).first.nil?
+    def valid_day?(date) = TimeHandler::valid_date?(date) && @client.find({ date: date }).first.nil?
     def all_present?(strings) = strings.all? { |s| !s.nil? && !s.gsub(' ', '').empty? }
     def valid_types?(values_to_types) = values_to_types.all? { |value, type| value.is_a?(type) }
 
